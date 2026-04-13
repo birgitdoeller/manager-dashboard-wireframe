@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>crossvertise Manager Dashboard – Wireframe</title>
+<style>
+  /* ===================== DESIGN TOKENS ===================== */
+  :root {
+    --red: #e24b4a;
+    --red-bg: #fcebeb;
+    --red-text: #a32d2d;
+    --amber: #EF9F27;
+    --amber-bg: #FAEEDA;
+    --amber-text: #854F0B;
+    --green: #639922;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --blue: #2563eb;
+    --blue-bg: #E6F1FB;
+    --blue-text: #185FA5;
+    --gray-bg: #f5f5f3;
+    --white: #ffffff;
+    --border: #e0e0e0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #888888;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --border-width: 0.5px;
+    --priority-border: 3px;
+  }
+
+  /* ===================== RESET & BASE ===================== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: #ddd;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  /* ===================== SCREEN WRAPPER ===================== */
+  .screen {
+    display: none;
+    max-width: 900px;
+    margin: 24px auto;
+    background: var(--gray-bg);
+    min-height: 100vh;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  }
+  .screen.active { display: block; }
+
+  /* ===================== TOPBAR ===================== */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 14px;
+  }
+  .manager-info { line-height: 1.3; }
+  .manager-name { font-weight: 600; font-size: 14px; }
+  .manager-date { font-size: 12px; color: var(--text-secondary); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .topbar select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 10px;
+    font-size: 13px;
+    background: var(--white);
+    cursor: pointer;
+  }
+  .toggle-btn {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 12px;
+    font-size: 12px;
+    background: var(--gray-bg);
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+
+  /* ===================== NAV BAR (Screen Nav) ===================== */
+  .nav-bar {
+    background: #222;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .nav-bar span { color: #aaa; font-size: 11px; margin-right: 4px; }
+  .nav-btn {
+    background: #333;
+    color: #ddd;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .nav-btn:hover, .nav-btn.active { background: var(--blue); color: white; }
+
+  /* ===================== CONTENT AREA ===================== */
+  .content { padding: 20px; }
+
+  /* ===================== STAT TILES ===================== */
+  .stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) { .stat-tiles { grid-template-columns: repeat(2, 1fr); } }
+  .stat-tile {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-tile .stat-number { font-size: 28px; font-weight: 700; }
+  .stat-tile .stat-label { font-size: 12px; color: var(--text-secondary); }
+  .stat-tile.critical .stat-number { color: var(--red); }
+  .stat-tile.today .stat-number { color: var(--amber); }
+  .stat-tile.week .stat-number { color: var(--green); }
+  .stat-tile.messages .stat-number { color: var(--blue); }
+  .stat-tile .stat-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ===================== BANNER ===================== */
+  .banner {
+    background: var(--blue-bg);
+    border: 1px solid #bcd4f5;
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .banner-text { color: var(--blue-text); font-size: 13px; }
+  .banner-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .btn-banner {
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* ===================== SECTION HEADERS ===================== */
+  .section-header {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin: 24px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-header.p1-section { color: var(--red-text); }
+
+  /* ===================== PHASE ACCORDION ===================== */
+  .phase-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .phase-block.dimmed { opacity: 0.45; }
+  .phase-toggle {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    background: var(--white);
+  }
+  .phase-toggle:hover { background: #fafafa; }
+  .phase-label { display: flex; align-items: center; gap: 10px; }
+  .phase-id {
+    font-weight: 700;
+    font-size: 13px;
+    background: var(--gray-bg);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+  .phase-name { font-weight: 600; font-size: 14px; }
+  .phase-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: var(--gray-bg);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .phase-chevron { color: var(--text-secondary); font-size: 12px; transition: transform 0.2s; }
+  .phase-chevron.open { transform: rotate(180deg); }
+  .phase-body { display: none; padding: 12px 16px 16px; border-top: 1px solid var(--border); }
+  .phase-body.open { display: block; }
+
+  /* ===================== CARDS ===================== */
+  .card {
+    background: var(--white);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    overflow: hidden;
+    border-left: var(--priority-border) solid transparent;
+  }
+  .card.p1 { border-left-color: var(--red); }
+  .card.p2 { border-left-color: var(--amber); }
+  .card.p3 { border-left-color: var(--green); }
+  .card-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-header:hover { background: #fafafa; }
+  .card-left { flex: 1; }
+  .card-top-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-left: 12px; }
+  .card-amount { font-weight: 700; font-size: 15px; }
+  .card-customer { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .card-customer a { color: var(--blue); text-decoration: none; }
+  .card-customer a:hover { text-decoration: underline; }
+  .card-action { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .card-reason { font-size: 12px; }
+  .card-reason.red { color: var(--red-text); }
+  .card-reason.amber { color: var(--amber-text); }
+  .card-reason.green { color: var(--green-text); }
+  .chevron { color: var(--text-secondary); font-size: 11px; transition: transform 0.2s; }
+  .chevron.open { transform: rotate(180deg); }
+  .card-body { display: none; border-top: 1px solid var(--border); padding: 16px; }
+  .card-body.open { display: block; }
+
+  /* ===================== BADGES & TAGS ===================== */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge.p1 { background: var(--red-bg); color: var(--red-text); }
+  .badge.p2 { background: var(--amber-bg); color: var(--amber-text); }
+  .badge.p3 { background: var(--green-bg); color: var(--green-text); }
+  .type-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--gray-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  /* ===================== BUTTONS ===================== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: var(--radius-md);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover:not(:disabled) { background: #1d4fd8; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover:not(:disabled) { background: #c73a39; }
+  .btn-success { background: var(--green); color: white; }
+  .btn-success:hover:not(:disabled) { background: #527f1c; }
+  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text-primary); }
+  .btn-outline:hover { background: var(--gray-bg); }
+  .btn-ghost { background: transparent; color: var(--blue); padding: 4px 8px; font-size: 13px; cursor: pointer; border: none; }
+  .btn-ghost:hover { text-decoration: underline; }
+  .btn-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .link-btn { color: var(--blue); text-decoration: none; font-size: 13px; cursor: pointer; border: none; background: none; padding: 0; }
+  .link-btn:hover { text-decoration: underline; }
+
+  /* ===================== LINK BLOCK ===================== */
+  .link-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-top: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .link-block:hover { border-color: var(--blue); background: var(--blue-bg); }
+  .link-block .link-label { font-size: 13px; font-weight: 500; }
+  .link-block .link-arrow { color: var(--blue); font-size: 16px; }
+
+  /* ===================== MESSAGE BUBBLE ===================== */
+  .msg-bubble {
+    background: var(--blue-bg);
+    border: 1px solid #bcd4f5;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+  .msg-meta { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+  .msg-meta strong { color: var(--text-primary); font-weight: 600; }
+  .msg-text { font-size: 13px; line-height: 1.6; }
+
+  /* ===================== TEXTAREA ===================== */
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    background: var(--white);
+    color: var(--text-primary);
+  }
+  textarea:focus { outline: none; border-color: var(--blue); }
+
+  /* ===================== FORM FIELDS ===================== */
+  .form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-row:last-child { border-bottom: none; }
+  .form-label { flex: 1; font-size: 13px; color: var(--text-secondary); }
+  .form-value { font-size: 14px; font-weight: 500; min-width: 160px; text-align: right; }
+  .form-input {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 10px;
+    font-size: 13px;
+    width: 160px;
+    text-align: right;
+    font-family: inherit;
+  }
+  .form-input:focus { outline: none; border-color: var(--blue); }
+  .form-value.positive { color: var(--green); font-weight: 700; }
+  .form-value.negative { color: var(--red); font-weight: 700; }
+  .form-section {
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+
+  /* ===================== TABLE ===================== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    background: var(--gray-bg);
+  }
+  .data-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafafa; }
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+  .pill.green { background: var(--green-bg); color: var(--green-text); }
+  .pill.red { background: var(--red-bg); color: var(--red-text); }
+  .pill.amber { background: var(--amber-bg); color: var(--amber-text); }
+  .pill.blue { background: var(--blue-bg); color: var(--blue-text); }
+  .pill.gray { background: #eee; color: #666; }
+
+  /* ===================== CHECKLIST ===================== */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li input[type="checkbox"] {
+    width: 16px; height: 16px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--blue);
+    flex-shrink: 0;
+  }
+  .checklist li.done > .check-content { text-decoration: line-through; color: var(--text-secondary); }
+  .check-content { flex: 1; line-height: 1.5; }
+  .check-content a { color: var(--blue); text-decoration: none; }
+  .check-content a:hover { text-decoration: underline; }
+
+  /* ===================== DEADLINE BAR ===================== */
+  .deadline-bar {
+    background: var(--red-bg);
+    border: 1px solid #f0b0b0;
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 24px;
+  }
+  .deadline-item { display: flex; flex-direction: column; gap: 2px; }
+  .deadline-label { font-size: 11px; color: var(--red-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .deadline-value { font-size: 14px; font-weight: 700; color: var(--red); }
+
+  /* ===================== INFO ROW ===================== */
+  .info-row {
+    display: flex;
+    gap: 20px;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .info-item { display: flex; flex-direction: column; gap: 2px; }
+  .info-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+  .info-value { font-size: 14px; font-weight: 500; }
+
+  /* ===================== DECISION BUTTONS ===================== */
+  .decision-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .decision-btn {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .decision-btn:hover { border-color: var(--blue); background: var(--blue-bg); }
+  .decision-btn .decision-title { font-weight: 600; font-size: 14px; }
+  .decision-btn .decision-sub { color: var(--text-secondary); font-size: 12px; }
+  .decision-btn.red-btn { border-color: #f0b0b0; }
+  .decision-btn.red-btn:hover { border-color: var(--red); background: var(--red-bg); }
+  .decision-btn.green-btn { border-color: #c0dfa0; }
+  .decision-btn.green-btn:hover { border-color: var(--green); background: var(--green-bg); }
+  .decision-btn.amber-btn { border-color: #f0d0a0; }
+  .decision-btn.amber-btn:hover { border-color: var(--amber); background: var(--amber-bg); }
+
+  /* ===================== P1 SECTION ===================== */
+  .p1-section-block {
+    background: var(--red-bg);
+    border: 1px solid #f0b0b0;
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ===================== TOOLTIP ===================== */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-text {
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .tooltip-wrap:hover .tooltip-text { display: block; }
+
+  /* ===================== HINT TEXT ===================== */
+  .hint-box {
+    background: var(--amber-bg);
+    border: 1px solid #f0d0a0;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--amber-text);
+    margin-top: 10px;
+  }
+  .note-box {
+    background: var(--blue-bg);
+    border: 1px solid #bcd4f5;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--blue-text);
+    margin-top: 10px;
+  }
+  .dimmed-text { color: var(--text-secondary); font-style: italic; font-size: 13px; }
+
+  /* ===================== VARIANT LABEL ===================== */
+  .variant-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  /* ===================== SECTION TITLE ===================== */
+  .screen-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .screen-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+  .pattern-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .pattern-num {
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: var(--text-secondary);
+  }
+
+  /* ===================== TOC ===================== */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  @media (max-width: 560px) { .toc-grid { grid-template-columns: 1fr; } }
+  .toc-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .toc-item:hover { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-bg); }
+  .toc-num {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--blue);
+    min-width: 28px;
+  }
+  .toc-content .toc-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .toc-content .toc-job { font-size: 12px; color: var(--text-secondary); }
+
+  /* ===================== SEPARATOR ===================== */
+  .sep { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .subsection { margin-top: 24px; }
+  .subsection-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== GLOBAL NAV ===================== -->
+<div style="background:#111; padding:10px 16px; position:sticky; top:0; z-index:999; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+  <span style="color:#888; font-size:11px; margin-right:4px;">crossvertise Dashboard Wireframe</span>
+  <button class="nav-btn" onclick="showScreen('s0')">0 – Übersicht</button>
+  <button class="nav-btn" onclick="showScreen('s1')">1 – Dashboard</button>
+  <button class="nav-btn" onclick="showScreen('s2')">2 – Nur Link</button>
+  <button class="nav-btn" onclick="showScreen('s3')">3 – Nachricht</button>
+  <button class="nav-btn" onclick="showScreen('s4')">4 – Formular</button>
+  <button class="nav-btn" onclick="showScreen('s5')">5 – Kundenmsg</button>
+  <button class="nav-btn" onclick="showScreen('s6')">6 – Tabelle</button>
+  <button class="nav-btn" onclick="showScreen('s7')">7 – Checkliste</button>
+  <button class="nav-btn" onclick="showScreen('s8')">8 – Status-Pills</button>
+  <button class="nav-btn" onclick="showScreen('s9')">9 – Entscheidung</button>
+  <button class="nav-btn" onclick="showScreen('s10')">10 – Deadline</button>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 0 – Übersicht / Inhaltsverzeichnis
+     ============================================================ -->
+<div id="s0" class="screen active">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="avatar">BD</div>
+      <div class="manager-info">
+        <div class="manager-name">Manager Dashboard</div>
+        <div class="manager-date">crossvertise Wireframe – alle Patterns</div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Wireframe-Übersicht</div>
+    <div class="screen-subtitle">Alle Screens und Interaction-Patterns für das crossvertise Manager Dashboard. Klick auf eine Kachel navigiert direkt zum Screen.</div>
+
+    <div class="toc-grid">
+      <div class="toc-item" onclick="showScreen('s1')">
+        <div class="toc-num">1</div>
+        <div class="toc-content">
+          <div class="toc-name">Dashboard Gesamtansicht</div>
+          <div class="toc-job">Topbar · Stat-Kacheln · Montags-Banner · P1-Sektion · 6 Phasen</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s2')">
+        <div class="toc-num">2</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 1 – Nur Link</div>
+          <div class="toc-job">ANG Draft fertigstellen → Link-Block „Draft öffnen ↗"</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s3')">
+        <div class="toc-num">3</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 2 – Nachrichtenvorschlag</div>
+          <div class="toc-job">Begrüßungsmail senden (Vorkasse) – vorformulierter Text</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s4')">
+        <div class="toc-num">4</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 3 – Formular inline</div>
+          <div class="toc-job">Zahlungseingang bestätigen – Felder mit Auto-Differenz</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s5')">
+        <div class="toc-num">5</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 4 – Kundennachricht + Antwort</div>
+          <div class="toc-job">Kundenfrage beantworten – Messagefeed + Reklamations-Trigger</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s6')">
+        <div class="toc-num">6</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 5 – Tabelle mit Checkboxen</div>
+          <div class="toc-job">AB prüfen – Variante A (alle OK) / B (mind. 1 Ausfall)</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s7')">
+        <div class="toc-num">7</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 6 – Checkliste mit Links</div>
+          <div class="toc-job">Auftrags-Storno abwickeln – 4 Schritte, Button aktiviert sich</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s8')">
+        <div class="toc-num">8</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 7 – Checkliste mit Status-Pills</div>
+          <div class="toc-job">Druckfreigabe fehlgeschlagen – 4 Schritte mit Pills</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s9')">
+        <div class="toc-num">9</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 8 – Entscheidungsbuttons</div>
+          <div class="toc-job">Reklamation prüfen – 3 Entscheidungswege</div>
+        </div>
+      </div>
+      <div class="toc-item" onclick="showScreen('s10')">
+        <div class="toc-num">10</div>
+        <div class="toc-content">
+          <div class="toc-name">Pattern 9 – Deadline-Bar + Motivstatus</div>
+          <div class="toc-job">Motiv beim Kunden anfordern – DU-Schluss + Upload-Status</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 1 – Dashboard Gesamtansicht
+     ============================================================ -->
+<div id="s1" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="avatar">BD</div>
+      <div class="manager-info">
+        <div class="manager-name">Birgit Doeller</div>
+        <div class="manager-date">Montag, 13. April 2026</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <select>
+        <option>Meine Aufgaben</option>
+        <option>Team-Ansicht</option>
+        <option>Alle Manager</option>
+      </select>
+      <button class="toggle-btn">&#8592; Altes Dashboard</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stat-tiles">
+      <div class="stat-tile critical">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Kritisch (P1)</div>
+        <div class="stat-sub">sofort handeln</div>
+      </div>
+      <div class="stat-tile today">
+        <div class="stat-number">7</div>
+        <div class="stat-label">Heute (P2)</div>
+        <div class="stat-sub">bis 18:00 Uhr</div>
+      </div>
+      <div class="stat-tile week">
+        <div class="stat-number">14</div>
+        <div class="stat-label">Diese Woche (P3)</div>
+        <div class="stat-sub">bis Freitag</div>
+      </div>
+      <div class="stat-tile messages">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Offene Nachrichten</div>
+        <div class="stat-sub">unbeantwortet</div>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="banner-text">
+        <strong>Wochenbeginn-Check – Montag</strong>
+        3 Kampagnen starten diese Woche. Bitte Auftragsbestätigungen und Motivstatus prüfen.
+      </div>
+      <button class="btn-banner">Jetzt prüfen</button>
+    </div>
+
+    <div class="section-header p1-section">&#9888; Kritisch (P1) – sofortiger Handlungsbedarf</div>
+    <div class="p1-section-block">
+      <div class="card p1">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Reklamation</span></div>
+            <div class="card-customer">Media Markt Saturn <a href="#">Auftrag #4471 öffnen &#8599;</a></div>
+            <div class="card-action">Reklamation prüfen und entscheiden</div>
+            <div class="card-reason red">Eingegangen: heute 08:14 – Druckfehler gemeldet</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">12.400 &#8364;</span>
+            <span class="chevron">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="note-box">Karte aufgeklappt &#8594; Pattern 8: Entscheidungsbuttons (Screen 9)</div>
+        </div>
+      </div>
+      <div class="card p1">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Zahlung offen</span></div>
+            <div class="card-customer">Lidl Deutschland <a href="#">Auftrag #4390 öffnen &#8599;</a></div>
+            <div class="card-action">Zahlungseingang bestätigen (Vorkasse)</div>
+            <div class="card-reason red">Kampagnenstart: 16.04.2026 – Zahlung noch nicht gebucht</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">8.750 &#8364;</span>
+            <span class="chevron">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="note-box">Karte aufgeklappt &#8594; Pattern 3: Formularfelder inline (Screen 4)</div>
+        </div>
+      </div>
+      <div class="card p1">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Motiv fehlt</span></div>
+            <div class="card-customer">Deutsche Bahn <a href="#">Auftrag #4455 öffnen &#8599;</a></div>
+            <div class="card-action">Motiv beim Kunden anfordern (OOH – blockierend)</div>
+            <div class="card-reason red">DU-Schluss: 15.04.2026 – Kampagnenstart: 20.04.2026</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">31.200 &#8364;</span>
+            <span class="chevron">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="note-box">Karte aufgeklappt &#8594; Pattern 9: Deadline-Bar + Motivstatus (Screen 10)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase A -->
+    <div class="phase-block">
+      <div class="phase-toggle" onclick="togglePhase(this)">
+        <div class="phase-label">
+          <span class="phase-id">A</span>
+          <span class="phase-name">Angebotsphase</span>
+          <span class="phase-count">4 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+      <div class="phase-body">
+        <div class="card p3">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-left">
+              <div class="card-top-row"><span class="badge p3">P3</span><span class="type-tag">Angebot</span></div>
+              <div class="card-customer">Rewe Group <a href="#">Angebot #ANG-2024 öffnen &#8599;</a></div>
+              <div class="card-action">ANG Draft fertigstellen</div>
+              <div class="card-reason green">Fälligkeit: 17.04.2026</div>
+            </div>
+            <div class="card-right">
+              <span class="card-amount">5.600 &#8364;</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="note-box">Karte aufgeklappt &#8594; Pattern 1: Nur Link (Screen 2)</div>
+          </div>
+        </div>
+        <div class="dimmed-text">+ 3 weitere Jobs in Phase A</div>
+      </div>
+    </div>
+
+    <!-- Phase B -->
+    <div class="phase-block">
+      <div class="phase-toggle" onclick="togglePhase(this)">
+        <div class="phase-label">
+          <span class="phase-id">B</span>
+          <span class="phase-name">Auftragsphase</span>
+          <span class="phase-count">6 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+      <div class="phase-body">
+        <div class="card p2">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-left">
+              <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">Begrüßung</span></div>
+              <div class="card-customer">Aldi Süd <a href="#">Auftrag #4481 öffnen &#8599;</a></div>
+              <div class="card-action">Begrüßungsmail senden (Vorkasse)</div>
+              <div class="card-reason amber">Heute fällig – Auftrag eingegangen</div>
+            </div>
+            <div class="card-right">
+              <span class="card-amount">4.200 &#8364;</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="note-box">Karte aufgeklappt &#8594; Pattern 2: Nachrichtenvorschlag (Screen 3)</div>
+          </div>
+        </div>
+        <div class="dimmed-text">+ 5 weitere Jobs in Phase B</div>
+      </div>
+    </div>
+
+    <!-- Phase C -->
+    <div class="phase-block">
+      <div class="phase-toggle" onclick="togglePhase(this)">
+        <div class="phase-label">
+          <span class="phase-id">C</span>
+          <span class="phase-name">Einkaufsphase</span>
+          <span class="phase-count">3 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+      <div class="phase-body">
+        <div class="card p2">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-left">
+              <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">AB-Prüfung</span></div>
+              <div class="card-customer">Edeka Zentrale <a href="#">Auftrag #4422 öffnen &#8599;</a></div>
+              <div class="card-action">AB von JvB prüfen und bestätigen</div>
+              <div class="card-reason amber">Heute fällig – 12 Flächen zu prüfen</div>
+            </div>
+            <div class="card-right">
+              <span class="card-amount">19.800 &#8364;</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="note-box">Karte aufgeklappt &#8594; Pattern 5: Tabelle mit Checkboxen (Screen 6)</div>
+          </div>
+        </div>
+        <div class="dimmed-text">+ 2 weitere Jobs in Phase C</div>
+      </div>
+    </div>
+
+    <!-- Phase D -->
+    <div class="phase-block">
+      <div class="phase-toggle" onclick="togglePhase(this)">
+        <div class="phase-label">
+          <span class="phase-id">D</span>
+          <span class="phase-name">Produktion &amp; Motive</span>
+          <span class="phase-count">5 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+      <div class="phase-body">
+        <div class="card p2">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-left">
+              <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">Druckfreigabe</span></div>
+              <div class="card-customer">Staudigl GmbH <a href="#">Auftrag #4401 öffnen &#8599;</a></div>
+              <div class="card-action">Druckfreigabe fehlgeschlagen – prüfen</div>
+              <div class="card-reason amber">Upload gestern 16:30 – Fehler beim Server</div>
+            </div>
+            <div class="card-right">
+              <span class="card-amount">7.100 &#8364;</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="note-box">Karte aufgeklappt &#8594; Pattern 7: Checkliste mit Status-Pills (Screen 8)</div>
+          </div>
+        </div>
+        <div class="dimmed-text">+ 4 weitere Jobs in Phase D</div>
+      </div>
+    </div>
+
+    <!-- Phase E – leer -->
+    <div class="phase-block dimmed">
+      <div class="phase-toggle">
+        <div class="phase-label">
+          <span class="phase-id">E</span>
+          <span class="phase-name">Laufende Kampagne</span>
+          <span class="phase-count">0 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+    </div>
+
+    <!-- Phase F -->
+    <div class="phase-block">
+      <div class="phase-toggle" onclick="togglePhase(this)">
+        <div class="phase-label">
+          <span class="phase-id">F</span>
+          <span class="phase-name">Abschluss &amp; Finanzen</span>
+          <span class="phase-count">2 Jobs</span>
+        </div>
+        <span class="phase-chevron">&#9660;</span>
+      </div>
+      <div class="phase-body">
+        <div class="card p3">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-left">
+              <div class="card-top-row"><span class="badge p3">P3</span><span class="type-tag">Storno</span></div>
+              <div class="card-customer">H&amp;M Deutschland <a href="#">Auftrag #4312 öffnen &#8599;</a></div>
+              <div class="card-action">Auftrags-Storno abwickeln</div>
+              <div class="card-reason green">Fälligkeit: 18.04.2026 – Storno bestätigt</div>
+            </div>
+            <div class="card-right">
+              <span class="card-amount">3.200 &#8364;</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="note-box">Karte aufgeklappt &#8594; Pattern 6: Checkliste mit Links (Screen 7)</div>
+          </div>
+        </div>
+        <div class="dimmed-text">+ 1 weiterer Job in Phase F</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 2 – Pattern 1: Nur Link
+     ============================================================ -->
+<div id="s2" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 1</span> <strong>Nur Link</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 1 – Nur Link</div>
+    <div class="screen-subtitle">Job: ANG Draft fertigstellen – Direkter Sprung in ein externes Tool. Kein Formular, keine Eingabe – nur Navigation.</div>
+
+    <div class="subsection">
+      <div class="subsection-title">Karte geschlossen</div>
+      <div class="card p3">
+        <div class="card-header">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p3">P3</span><span class="type-tag">Angebot</span></div>
+            <div class="card-customer">Rewe Group <a href="#">Angebot #ANG-2024 öffnen &#8599;</a></div>
+            <div class="card-action">ANG Draft fertigstellen</div>
+            <div class="card-reason green">Fälligkeit: 17.04.2026</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">5.600 &#8364;</span>
+            <span class="chevron">&#9660;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">Karte aufgeklappt</div>
+      <div class="card p3">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p3">P3</span><span class="type-tag">Angebot</span></div>
+            <div class="card-customer">Rewe Group <a href="#">Angebot #ANG-2024 öffnen &#8599;</a></div>
+            <div class="card-action">ANG Draft fertigstellen</div>
+            <div class="card-reason green">Fälligkeit: 17.04.2026</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">5.600 &#8364;</span>
+            <span class="chevron open">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body open">
+          <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">
+            Der Angebotsdraft wurde noch nicht abgeschlossen. Bitte öffne das Dokument und schließe die Bearbeitung ab.
+          </p>
+          <a href="#" class="link-block">
+            <span class="link-label">Draft öffnen</span>
+            <span class="link-arrow">&#8599;</span>
+          </a>
+          <a href="#" class="link-block" style="margin-top:8px;">
+            <span class="link-label">Angebot #ANG-2024 im CRM öffnen</span>
+            <span class="link-arrow">&#8599;</span>
+          </a>
+          <div class="btn-group">
+            <button class="btn btn-outline">Abbrechen</button>
+            <button class="btn btn-success">Als erledigt markieren &#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 3 – Pattern 2: Nachrichtenvorschlag
+     ============================================================ -->
+<div id="s3" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 2</span> <strong>Nachrichtenvorschlag</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 2 – Nachrichtenvorschlag</div>
+    <div class="screen-subtitle">Job: Begrüßungsmail senden (Vorkasse) – Vorformulierter Text mit Platzhaltern, direkt absendbar oder bearbeitbar.</div>
+
+    <div class="card p2">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">Begrüßung</span></div>
+          <div class="card-customer">Aldi Süd <a href="#">Auftrag #4481 öffnen &#8599;</a></div>
+          <div class="card-action">Begrüßungsmail senden (Vorkasse)</div>
+          <div class="card-reason amber">Heute fällig – Auftrag eingegangen</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">4.200 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">Empfänger: <strong>einkauf@aldi-sued.de</strong> &middot; Betreff: <strong>Ihre Buchung bei crossvertise – Auftrag #4481</strong></p>
+
+        <div class="form-section">
+          <textarea id="msgText3" style="min-height:200px;">Sehr geehrte Damen und Herren,
+
+vielen Dank für Ihre Buchung bei crossvertise!
+
+Wir freuen uns, Ihnen mitteilen zu können, dass Ihr Auftrag [AUFTRAGSNUMMER] eingegangen ist und bearbeitet wird.
+
+Für Ihre Kampagne [KAMPAGNENNAME] in der Dekade [DEKADE] haben wir folgende Flächen reserviert: [ANZAHL FLÄCHEN] Standorte im Raum [REGIONEN].
+
+Da wir Ihre Buchung auf Vorkasse-Basis abwickeln, bitten wir Sie, den Betrag von [BETRAG inkl. MwSt.] bis spätestens [ZAHLUNGSDATUM] auf folgendes Konto zu überweisen:
+
+IBAN: DE12 3456 7890 1234 5678 90
+BIC: XVERTDE1XXX
+Verwendungszweck: [AUFTRAGSNUMMER]
+
+Bei Fragen stehen wir Ihnen gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+[MANAGER NAME]
+crossvertise GmbH</textarea>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <button class="btn-ghost" onclick="editMsg('msgText3')">Nachricht bearbeiten</button>
+          <div class="btn-group" style="margin-top:0;">
+            <button class="btn btn-outline">Abbrechen</button>
+            <button class="btn btn-primary">Senden &#9993;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box">Platzhalter in <strong>[eckigen Klammern]</strong> werden vor dem Senden automatisch befüllt (sofern im CRM vorhanden) oder müssen manuell ergänzt werden.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 4 – Pattern 3: Formularfelder inline
+     ============================================================ -->
+<div id="s4" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 3</span> <strong>Formularfelder inline</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 3 – Formularfelder inline</div>
+    <div class="screen-subtitle">Job: Zahlungseingang bestätigen (Vorkasse/Echtzeit) – Felder inline in der Karte, Differenz berechnet sich automatisch.</div>
+
+    <div class="card p1">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Zahlung offen</span></div>
+          <div class="card-customer">Lidl Deutschland <a href="#">Auftrag #4390 öffnen &#8599;</a></div>
+          <div class="card-action">Zahlungseingang bestätigen (Vorkasse)</div>
+          <div class="card-reason red">Kampagnenstart: 16.04.2026 – Zahlung noch nicht gebucht</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">8.750 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <div class="form-section">
+          <div class="form-row">
+            <span class="form-label">Auftragswert inkl. MwSt.</span>
+            <span class="form-value">10.412,50 &#8364;</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">Eingegangener Betrag</span>
+            <input class="form-input" type="text" id="amountIn" placeholder="0,00 &#8364;" oninput="calcDiff()" />
+          </div>
+          <div class="form-row">
+            <span class="form-label">Eingangsdatum</span>
+            <input class="form-input" type="date" id="dateIn" value="2026-04-13" />
+          </div>
+          <div class="form-row">
+            <span class="form-label">Differenz</span>
+            <span class="form-value positive" id="diffVal">0,00 &#8364;</span>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline">Abbrechen</button>
+          <button class="btn btn-success">Zahlung bestätigen &#10003;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box">Die Differenz wird automatisch aus <strong>Auftragswert &#8722; Eingegangener Betrag</strong> berechnet. Grün = ausgeglichen, Rot = Abweichung.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 5 – Pattern 4: Kundennachricht + Antwort
+     ============================================================ -->
+<div id="s5" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 4</span> <strong>Kundennachricht + Antwort</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 4 – Kundennachricht + Antwort</div>
+    <div class="screen-subtitle">Job: Kundenfrage beantworten (Messagefeed) – Kundenmeldung als Bubble, Antwort per Textarea oder Telefon-Markierung.</div>
+
+    <div class="card p2">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">Kundennachricht</span></div>
+          <div class="card-customer">Kaufland GmbH <a href="#">Auftrag #4451 öffnen &#8599;</a></div>
+          <div class="card-action">Kundenfrage beantworten</div>
+          <div class="card-reason amber">Eingegangen: gestern 17:42 – noch unbeantwortet</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">6.900 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <div class="msg-bubble">
+          <div class="msg-meta"><strong>Frau Schneider (Kaufland)</strong> &middot; 12.04.2026, 17:42 Uhr</div>
+          <div class="msg-text">
+            Guten Tag,<br><br>
+            wir haben festgestellt, dass in der Auftragsbestätigung nur 8 Flächen aufgeführt sind, wir aber 10 gebucht haben. Können Sie das bitte prüfen und mir eine korrigierte AB zukommen lassen? Die Kampagne soll wie besprochen am 20.04. starten.<br><br>
+            Vielen Dank und freundliche Grüße,<br>
+            Maria Schneider
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div class="tooltip-wrap">
+            <button class="btn btn-outline" style="font-size:12px; color:var(--red-text); border-color:#f0b0b0;">
+              &#9873; Als Reklamation markieren
+            </button>
+            <span class="tooltip-text">Erzeugt automatisch einen P1-Job „Reklamation prüfen" im Dashboard</span>
+          </div>
+        </div>
+
+        <textarea placeholder="Antwort eingeben …" style="min-height:110px;"></textarea>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
+          <button class="link-btn">Erledigt per Telefon</button>
+          <div class="btn-group" style="margin-top:0;">
+            <button class="btn btn-outline">Abbrechen</button>
+            <button class="btn btn-primary">Senden &#9993;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 6 – Pattern 5: Tabelle mit Checkboxen
+     ============================================================ -->
+<div id="s6" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 5</span> <strong>Tabelle mit Checkboxen</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 5 – Tabelle mit Checkboxen</div>
+    <div class="screen-subtitle">Job: AB von JvB prüfen und bestätigen – Variante A (alle OK) vs. Variante B (mind. 1 Ausfall).</div>
+
+    <div class="subsection">
+      <div class="variant-label">Variante A – Alle Flächen OK</div>
+      <div class="card p2">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">AB-Prüfung</span></div>
+            <div class="card-customer">Edeka Zentrale <a href="#">Auftrag #4422 öffnen &#8599;</a></div>
+            <div class="card-action">AB von JvB prüfen und bestätigen</div>
+            <div class="card-reason amber">Heute fällig – 5 Flächen zu prüfen</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">19.800 &#8364;</span>
+            <span class="chevron open">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body open">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:42px;">OK</th>
+                <th>Fläche</th>
+                <th>Standort</th>
+                <th>Dekade</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><input type="checkbox" checked></td><td>F-001 · 18/1</td><td>München Hauptbahnhof</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-002 · 24/1</td><td>Hamburg Altona</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-003 · 18/1</td><td>Berlin Mitte</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-004 · 36/1</td><td>Köln Innenstadt</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-005 · 18/1</td><td>Frankfurt Messe</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+            </tbody>
+          </table>
+          <div class="btn-group">
+            <button class="btn btn-outline">Abbrechen</button>
+            <button class="btn btn-success">AB-Prüfung abschließen &#10003;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="variant-label">Variante B – Mind. 1 Ausfall</div>
+      <div class="card p2">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-left">
+            <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">AB-Prüfung</span></div>
+            <div class="card-customer">Edeka Zentrale <a href="#">Auftrag #4422 öffnen &#8599;</a></div>
+            <div class="card-action">AB von JvB prüfen und bestätigen</div>
+            <div class="card-reason amber">Heute fällig – 5 Flächen zu prüfen</div>
+          </div>
+          <div class="card-right">
+            <span class="card-amount">19.800 &#8364;</span>
+            <span class="chevron open">&#9660;</span>
+          </div>
+        </div>
+        <div class="card-body open">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:42px;">OK</th>
+                <th>Fläche</th>
+                <th>Standort</th>
+                <th>Dekade</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><input type="checkbox" checked></td><td>F-001 · 18/1</td><td>München Hauptbahnhof</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr style="background:var(--red-bg);"><td><input type="checkbox"></td><td>F-002 · 24/1</td><td>Hamburg Altona</td><td>Dek. 3/26</td><td><span class="pill red">Ausfall</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-003 · 18/1</td><td>Berlin Mitte</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+              <tr style="background:var(--red-bg);"><td><input type="checkbox"></td><td>F-004 · 36/1</td><td>Köln Innenstadt</td><td>Dek. 3/26</td><td><span class="pill red">Ausfall</span></td></tr>
+              <tr><td><input type="checkbox" checked></td><td>F-005 · 18/1</td><td>Frankfurt Messe</td><td>Dek. 3/26</td><td><span class="pill green">Bestätigt</span></td></tr>
+            </tbody>
+          </table>
+          <div class="hint-box">&#9888; 2 Flächen als Ausfall markiert. Bitte erst Ersatzflächen mit dem Einkauf klären, bevor die AB-Prüfung abgeschlossen werden kann.</div>
+          <div class="btn-group">
+            <button class="btn btn-outline">Abbrechen</button>
+            <a href="#" class="btn btn-outline" style="color:var(--blue); border-color:var(--blue);">Einkauf kontaktieren &#8599;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 7 – Pattern 6: Checkliste mit Links
+     ============================================================ -->
+<div id="s7" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 6</span> <strong>Checkliste mit Links</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 6 – Checkliste mit Links</div>
+    <div class="screen-subtitle">Job: Auftrags-Storno abwickeln – 4 Schritte als abhakbare Checkboxen. „Storno abschließen" aktiviert sich erst wenn alle Schritte erledigt.</div>
+
+    <div class="card p3">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p3">P3</span><span class="type-tag">Storno</span></div>
+          <div class="card-customer">H&amp;M Deutschland <a href="#">Auftrag #4312 öffnen &#8599;</a></div>
+          <div class="card-action">Auftrags-Storno abwickeln</div>
+          <div class="card-reason green">Fälligkeit: 18.04.2026 – Storno vom Kunden bestätigt</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">3.200 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <ul class="checklist" id="stornoList">
+          <li id="storno1">
+            <input type="checkbox" onchange="checkStorno()">
+            <div class="check-content">Mit Christian Müller (Einkauf) abstimmen – Storno intern freigegeben?</div>
+          </li>
+          <li id="storno2">
+            <input type="checkbox" onchange="checkStorno()">
+            <div class="check-content">
+              Stornogebühr eintragen und Auftrag auf 0 setzen
+              <br><a href="#">Auftrag #4312 öffnen &#8599;</a>
+            </div>
+          </li>
+          <li id="storno3">
+            <input type="checkbox" onchange="checkStorno()">
+            <div class="check-content">
+              Gutschriftsrechnung im CRM erstellen (falls bereits abgerechnet)
+              <br><a href="#">CRM öffnen &#8599;</a>
+            </div>
+          </li>
+          <li id="storno4">
+            <input type="checkbox" onchange="checkStorno()">
+            <div class="check-content">Rückerstattung an Finance melden (Betrag + IBAN bestätigen)</div>
+          </li>
+        </ul>
+        <div class="btn-group">
+          <button class="btn btn-outline">Abbrechen</button>
+          <button class="btn btn-danger" id="stornoBtn" disabled>Storno abschließen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box">Der Button „Storno abschließen" wird aktiv, sobald alle 4 Schritte abgehakt wurden.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 8 – Pattern 7: Checkliste mit Status-Pills
+     ============================================================ -->
+<div id="s8" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 7</span> <strong>Checkliste mit Status-Pills</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 7 – Checkliste mit Status-Pills</div>
+    <div class="screen-subtitle">Job: Druckfreigabe fehlgeschlagen (Staudigl) – Statusübersicht der 4 Prüfschritte mit visuellen Pills.</div>
+
+    <div class="card p2">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p2">P2</span><span class="type-tag">Druckfreigabe</span></div>
+          <div class="card-customer">Staudigl GmbH <a href="#">Auftrag #4401 öffnen &#8599;</a></div>
+          <div class="card-action">Druckfreigabe fehlgeschlagen – prüfen</div>
+          <div class="card-reason amber">Upload gestern 16:30 – Fehler beim Staudigl-Server</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">7.100 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <table class="data-table" style="margin-bottom:14px;">
+          <thead>
+            <tr>
+              <th>Schritt</th>
+              <th style="width:120px; text-align:right;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. Motiv-Upload im System geprüft</td>
+              <td style="text-align:right;"><span class="pill green">OK</span></td>
+            </tr>
+            <tr>
+              <td>2. Dateiformat und Auflösung geprüft (&#8805; 300 dpi)</td>
+              <td style="text-align:right;"><span class="pill green">OK</span></td>
+            </tr>
+            <tr>
+              <td>3. Übertragung an Druckerei ausgelöst</td>
+              <td style="text-align:right;"><span class="pill green">OK</span></td>
+            </tr>
+            <tr style="background:var(--red-bg);">
+              <td>
+                4. Druckfreigabe auf Staudigl-Server bestätigt
+                <br><a href="#">Staudigl-Server öffnen &#8599;</a>
+              </td>
+              <td style="text-align:right;"><span class="pill red">Ausstehend</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="hint-box">Schritt 4 konnte nicht automatisch bestätigt werden. Bitte Staudigl-Server öffnen und Freigabe manuell prüfen.</div>
+        <div class="btn-group">
+          <button class="btn btn-outline">Abbrechen</button>
+          <button class="btn btn-success">Freigabe bestätigen &#10003;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 9 – Pattern 8: Entscheidungsbuttons
+     ============================================================ -->
+<div id="s9" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 8</span> <strong>Entscheidungsbuttons</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 8 – Entscheidungsbuttons</div>
+    <div class="screen-subtitle">Job: Reklamation prüfen – Kundenmeldung + Kontext-Info, dann 3 klar getrennte Entscheidungswege.</div>
+
+    <div class="card p1">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Reklamation</span></div>
+          <div class="card-customer">Media Markt Saturn <a href="#">Auftrag #4471 öffnen &#8599;</a></div>
+          <div class="card-action">Reklamation prüfen und entscheiden</div>
+          <div class="card-reason red">Eingegangen: heute 08:14 – Druckfehler gemeldet</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">12.400 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <div class="msg-bubble">
+          <div class="msg-meta"><strong>Herr Wagner (Media Markt Saturn)</strong> &middot; 13.04.2026, 08:14 Uhr</div>
+          <div class="msg-text">
+            Guten Morgen,<br><br>
+            wir haben heute beim Kontrollgang festgestellt, dass das Plakat an der Fläche F-002 (Hamburg Altona) einen deutlichen Druckfehler aufweist – die linke Bildhälfte ist verblasst. Das ist inakzeptabel und muss sofort behoben werden.
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">Fläche</span>
+            <span class="info-value">F-002 &middot; Hamburg Altona &middot; 24/1</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Kampagnenstart</span>
+            <span class="info-value">08.04.2026</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Nachklebetag</span>
+            <span class="info-value">15.04.2026</span>
+          </div>
+        </div>
+
+        <p style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:8px;">Entscheidung</p>
+        <div class="decision-group">
+          <button class="decision-btn red-btn">
+            <span class="decision-title">Nicht valide – Nachklebetag vereinbart</span>
+            <span class="decision-sub">&#8594; Kunden automatisch informieren: Nachkleben am 15.04. bereits geplant</span>
+          </button>
+          <button class="decision-btn green-btn">
+            <span class="decision-title">Valide – Formale Reklamation erstellen</span>
+            <span class="decision-sub">&#8594; Reklamationsformular öffnen und beim Vermarkter einreichen</span>
+          </button>
+          <button class="decision-btn amber-btn">
+            <span class="decision-title">Versteckter Ausfall – JvB kontaktieren</span>
+            <span class="decision-sub">&#8594; Einkauf (JvB) informieren, um Ersatzfläche zu organisieren</span>
+          </button>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCREEN 10 – Pattern 9: Deadline-Bar + Motivstatus
+     ============================================================ -->
+<div id="s10" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="toggle-btn" onclick="showScreen('s1')">&#8592; Dashboard</button>
+    </div>
+    <div class="topbar-right">
+      <div class="pattern-header"><span class="pattern-num">Pattern 9</span> <strong>Deadline-Bar + Motivstatus</strong></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="screen-title">Pattern 9 – Deadline-Bar + Motivstatus</div>
+    <div class="screen-subtitle">Job: Motiv beim Kunden anfordern (OOH – blockierend) – Rote Deadline-Bar, Motivstatus je Fläche, Nachrichtenvorschlag mit Platzhaltern.</div>
+
+    <div class="card p1">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="card-top-row"><span class="badge p1">P1</span><span class="type-tag">Motiv fehlt</span></div>
+          <div class="card-customer">Deutsche Bahn <a href="#">Auftrag #4455 öffnen &#8599;</a></div>
+          <div class="card-action">Motiv beim Kunden anfordern (OOH – blockierend)</div>
+          <div class="card-reason red">DU-Schluss: 15.04.2026 – Kampagnenstart: 20.04.2026</div>
+        </div>
+        <div class="card-right">
+          <span class="card-amount">31.200 &#8364;</span>
+          <span class="chevron open">&#9660;</span>
+        </div>
+      </div>
+      <div class="card-body open">
+        <div class="deadline-bar">
+          <div class="deadline-item">
+            <span class="deadline-label">DU-Schluss</span>
+            <span class="deadline-value">15.04.2026</span>
+          </div>
+          <div class="deadline-item">
+            <span class="deadline-label">Kampagnenstart</span>
+            <span class="deadline-value">20.04.2026</span>
+          </div>
+          <div class="deadline-item">
+            <span class="deadline-label">Verbleibend</span>
+            <span class="deadline-value" style="color:var(--red);">2 Tage</span>
+          </div>
+        </div>
+
+        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:8px;">Motivstatus je Fläche</p>
+        <table class="data-table" style="margin-bottom:14px;">
+          <thead>
+            <tr>
+              <th>Fläche</th>
+              <th>Standort</th>
+              <th>Format</th>
+              <th style="text-align:right;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:var(--red-bg);"><td>F-001 · 18/1</td><td>Berlin Ostbahnhof</td><td>18/1</td><td style="text-align:right;"><span class="pill red">Motiv fehlt</span></td></tr>
+            <tr style="background:var(--amber-bg);"><td>F-002 · 4/1</td><td>Hamburg HBF</td><td>4/1</td><td style="text-align:right;"><span class="pill amber">Upload ausstehend</span></td></tr>
+            <tr style="background:var(--red-bg);"><td>F-003 · 18/1</td><td>München HBF</td><td>18/1</td><td style="text-align:right;"><span class="pill red">Motiv fehlt</span></td></tr>
+            <tr><td>F-004 · 4/1</td><td>Frankfurt Flughafen</td><td>4/1</td><td style="text-align:right;"><span class="pill green">Freigegeben</span></td></tr>
+          </tbody>
+        </table>
+
+        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:8px;">Nachrichtenvorschlag</p>
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">An: <strong>motiv@deutschebahn.com</strong> &middot; Betreff: <strong>Dringende Motivanforderung – Kampagne #4455</strong></p>
+        <div class="form-section">
+          <textarea style="min-height:180px;">Sehr geehrte Damen und Herren,
+
+für Ihre Kampagne [KAMPAGNENNAME] (Auftrag #4455) fehlen noch Druckmotive für folgende Flächen:
+
+- F-001, Berlin Ostbahnhof (Format: 18/1)
+- F-003, München HBF (Format: 18/1)
+
+Für F-002 (Hamburg HBF) ist der Upload noch ausstehend.
+
+Der Druckunterlagenschluss ist am 15.04.2026. Um Ihren Kampagnenstart am 20.04.2026 zu sichern, bitten wir Sie, die Motive bis spätestens [DATUM/UHRZEIT] hochzuladen oder uns direkt zuzusenden.
+
+Upload-Link: [UPLOAD LINK]
+
+Bei Rückfragen stehen wir gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+[MANAGER NAME]
+crossvertise GmbH</textarea>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <button class="btn-ghost">Nachricht bearbeiten</button>
+          <div class="btn-group" style="margin-top:0;">
+            <button class="btn btn-outline">Abbrechen</button>
+            <button class="btn btn-primary">Senden &#9993;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    var map = { s0:0, s1:1, s2:2, s3:3, s4:4, s5:5, s6:6, s7:7, s8:8, s9:9, s10:10 };
+    var idx = map[id];
+    if (idx !== undefined) {
+      var btns = document.querySelectorAll('.nav-btn');
+      if (btns[idx]) btns[idx].classList.add('active');
+    }
+  }
+
+  function togglePhase(el) {
+    var chevron = el.querySelector('.phase-chevron');
+    var body = el.nextElementSibling;
+    if (body && body.classList.contains('phase-body')) {
+      body.classList.toggle('open');
+      chevron.classList.toggle('open');
+    }
+  }
+
+  function toggleCard(el) {
+    var body = el.nextElementSibling;
+    var chevron = el.querySelector('.chevron');
+    if (body) {
+      body.classList.toggle('open');
+      if (chevron) chevron.classList.toggle('open');
+    }
+  }
+
+  function calcDiff() {
+    var target = 10412.50;
+    var raw = document.getElementById('amountIn').value.replace(/[^0-9,\.]/g, '').replace(',', '.');
+    var val = parseFloat(raw) || 0;
+    var diff = target - val;
+    var el = document.getElementById('diffVal');
+    if (Math.abs(diff) < 0.01) {
+      el.className = 'form-value positive';
+      el.textContent = '0,00 \u20AC \u2713';
+    } else if (diff > 0) {
+      el.className = 'form-value negative';
+      el.textContent = '\u2212' + Math.abs(diff).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' \u20AC';
+    } else {
+      el.className = 'form-value positive';
+      el.textContent = '+' + Math.abs(diff).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' \u20AC';
+    }
+  }
+
+  function checkStorno() {
+    var checks = document.querySelectorAll('#stornoList input[type="checkbox"]');
+    var allChecked = Array.from(checks).every(function(c) { return c.checked; });
+    document.getElementById('stornoBtn').disabled = !allChecked;
+    checks.forEach(function(c) {
+      var li = c.parentElement;
+      if (c.checked) li.classList.add('done');
+      else li.classList.remove('done');
+    });
+  }
+
+  function editMsg(id) {
+    var ta = document.getElementById(id);
+    if (ta) {
+      ta.focus();
+      ta.style.borderColor = 'var(--blue)';
+      ta.style.boxShadow = '0 0 0 3px var(--blue-bg)';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    showScreen('s0');
+  });
+</script>
+</body>
+</html>
